@@ -1,6 +1,6 @@
 import { User } from './User';
 
-export interface Result {
+export type Result = {
   results: Array<User>;
   info: {
     seed: string;
@@ -8,4 +8,4 @@ export interface Result {
     page: number;
     version: string;
   };
-}
+};
