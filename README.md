@@ -1,12 +1,13 @@
-Detta test har följande setup:
+Detta test har följande setup via create-next-app:
 
 - TypeScript
 - React
 - Next.js
 - Material UI
-- Prettier
 
-Typdefinitionsfilerna är byggda utifrån JSON-filen.
+Prettier för formatering.
+
+Typdefinitionsfilerna är automatiskt byggda utifrån JSON-filen.
 
 En egen komponent MyRecursiveViewer som visar generell objekt-data med SimpleTreeView.
 
