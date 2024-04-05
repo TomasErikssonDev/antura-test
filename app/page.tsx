@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Result } from '../interfaces/Result';
-import { User } from '../interfaces/User';
+import { Result } from '../types/Result';
+import { User } from '../types/User';
 import GetAppIcon from '@mui/icons-material/GetApp';
-import MyRecursiveViewer from '@/components/MyRecursiveViewer';
+import UserCard from '@/components/UserCard';
 import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material';
 
 export default function Home() {
@@ -49,18 +49,7 @@ export default function Home() {
         </Typography>
       )}
 
-      {user && (
-        <Card
-          sx={{
-            width: '100%',
-            display: 'flex',
-            gap: '1rem',
-          }}
-        >
-          {user && <MyRecursiveViewer sx={{ flex: 1 }} object={user} />}
-          <Box sx={{ width: '10rem', height: '10rem' }} component="img" src={user.picture.large} alt="" />
-        </Card>
-      )}
+      {user && <UserCard user={user} />}
     </Box>
   );
 }
