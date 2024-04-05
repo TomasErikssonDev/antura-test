@@ -1,95 +1,77 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+import React, { useState } from 'react';
+import { Result } from '../interfaces/Result';
+import { User } from '../interfaces/User';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import MyRecursiveViewer from '@/components/MyRecursiveViewer';
+import { Box, Button, Card, CircularProgress, TextField, Typography } from '@mui/material';
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [url, setUrl] = useState('https://randomuser.me/api/');
+
+  const fetchResult = async () => {
+    setIsLoading(true);
+    setHasError(false);
+    setUser(null);
+    try {
+      const result = await fetchResultFromAPI(url);
+      setUser(result.results[0]);
+    } catch (error) {
+      console.error('Error fetching Result:', error);
+      setHasError(true);
+    }
+    setIsLoading(false);
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'baseline' }}>
+      <TextField
+        onChange={(ev) => setUrl(ev.target.value)}
+        label="URL"
+        variant="outlined"
+        value={url}
+        sx={{ width: '100%' }}
+      />
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      <Button disabled={isLoading} variant="outlined" startIcon={<GetAppIcon />} onClick={fetchResult}>
+        Hämta användarinformation
+      </Button>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+      {hasError && <Typography color="error">Ett oväntat fel uppstod</Typography>}
+
+      {isLoading && (
+        <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+          <CircularProgress size="1rem" sx={{ marginRight: '.5rem' }} /> Hämtar...
+        </Typography>
+      )}
+
+      {user && (
+        <Card
+          sx={{
+            width: '100%',
+            display: 'flex',
+            gap: '1rem',
+          }}
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+          {user && <MyRecursiveViewer sx={{ flex: 1 }} object={user} />}
+          <Box sx={{ width: '10rem', height: '10rem' }} component="img" src={user.picture.large} alt="" />
+        </Card>
+      )}
+    </Box>
   );
+}
+
+async function fetchResultFromAPI(url: string): Promise<Result> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error('Failed to fetch data');
+  }
+
+  const result = (await response.json()) as Result;
+
+  return result;
 }
