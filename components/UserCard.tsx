@@ -1,38 +1,39 @@
 import { User } from '@/types/User';
-import { Card } from '@mui/material';
+import { Card, SxProps } from '@mui/material';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import styles from './UserCard.module.css';
 
 export default function UserCard({ user }: { user: User }) {
-  const { name, location, email, registered, picture } = user;
-  const { street, city, state, country } = location;
-  const registeredDate = new Date(registered.date).toLocaleDateString('sv');
-
   return (
-    <Card sx={{ width: '100%' }} role="article" lang="sv">
+    <Card sx={{ width: '100%' }}>
       <div className={styles.container}>
         <div className={styles.info}>
           <div>
-            <h2 className={styles.label}>Namn</h2>
-            <div>{`${name.title} ${name.first} ${name.last}`}</div>
-          </div>
-          <div>
-            <h2 className={styles.label}>Adress</h2>
-            <div>{`${street.name} ${street.number}, ${city}, ${state}, ${country}`}</div>
-          </div>
-          <div>
-            <h2 className={styles.label}>E-post</h2>
+            <div className={styles.label}>Namn</div>
             <div>
-              <a href={`mailto:${email}`} className={styles.emailLink}>
-                {email}
-              </a>
+              {user.name.title} {user.name.first} {user.name.last}
             </div>
           </div>
           <div>
-            <h2 className={styles.label}>Registrerad</h2>
-            <div>{registeredDate}</div>
+            <div className={styles.label}>Adress</div>
+            <div>
+              {user.location.street.name} {user.location.street.number}, {user.location.city}, {user.location.state},{' '}
+              {user.location.country}
+            </div>
+          </div>
+          <div>
+            <div className={styles.label}>E-post</div>
+            <div>
+              <a href={'mailto:' + user.email}>{user.email}</a>
+            </div>
+          </div>
+          <div>
+            <div className={styles.label}>Registrerad</div>
+            <div>{new Date(user.registered.date).toLocaleDateString('sv')}</div>
           </div>
         </div>
-        <img className={styles.image} src={picture.large} alt={`Profile photo of ${name.first} ${name.last}`} />
+        <img className={styles.image} src={user.picture.large} alt="Profile photo" />
       </div>
     </Card>
   );
